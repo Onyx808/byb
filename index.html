@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+  <meta charset="utf-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+     <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+  />
+  <title>Backyard Buoys</title>
+  <!--link href="style.css" rel="stylesheet" /-->
+  <style>
+  #map {
+    height: 700px;
+    width: 100%;
+	}
+	   body, html {
+            margin: 0;
+            padding: 0;
+        }
+
+/*        video {
+            width: 100%;
+            height: 100vh;
+            display: block;
+            object-fit:cover;
+        }*/
+        a {
+	        font-weight: bold !important;
+        }
+        
+        
+        
+        
+        #background-video {
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: -1;
+  opacity: 1;
+}
+.wh-70 {
+	height: 100vh;
+}
+
+
+.headroom {
+    will-change: transform;
+    transition: transform 200ms linear;
+}
+.headroom--pinned {
+    transform: translateY(0%);
+}
+.headroom--unpinned {
+    transform: translateY(-100%);
+}
+
+
+.headroom--pinned {
+	display: block;
+}
+.headroom--unpinned {
+	display: none;
+}
+.header--fixed {
+	position: fixed;
+	z-index: 100;
+	right: 0;
+	left: 0;
+	top: 0;
+}
+
+
+.bg-dark-blue {
+    background-color: #001F3F;
+    color: white;
+}
+
+
+.switchable {
+	background-color: white;
+}
+
+
+html[data-bs-theme="dark"] body, .switchable[data-bs-theme="dark"] {
+  background-color: #001F3F;
+  color: #ffffff;
+}
+
+html[data-bs-theme="dark"] a {
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none; /* Optional: If you don't want underlined links */
+}
+
+html[data-bs-theme="dark"] a:hover {
+  color: #ffffff;
+  opacity: 1;
+  text-decoration: none; /* Optional: If you don't want underlined links on hover */
+}
+
+header.headroom--top {
+	background-color: transparent !important;
+	color: white;
+}
+header.headroom--top a {
+	color: white;
+}
+.dropdown-menu a {
+	color: black !important;
+}
+
+.dropdown-menu[data-bs-theme="dark"] a {
+	color: white !important;
+}
+
+
+.module {
+	background-color: rgba(176, 176, 176, 0.1);
+	padding: 50px;
+	border-radius: 16px;
+}
+
+*:focus {
+    outline: none !important;
+}
+
+.scroll-indicator {
+    font-size: 2em; /* Adjust the size as needed */
+    animation: fadeInSlideDown 4s infinite;
+    position: absolute;
+    bottom: 5%; /* Position from the bottom */
+    left: 50%; /* Center the icon */
+    transform: translateX(-50%); /* Center the icon */
+    opacity: 0; /* Initially hidden */
+    color: white;
+}
+
+@keyframes fadeInSlideDown {
+    0% {
+        transform: translateY(-100px) translateX(-50%) scale(0);
+        opacity: 0;
+    }
+    50% {
+        transform: translateY(-50px) translateX(-50%) scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(0px) translateX(-50%) scale(0);
+        opacity: 0;
+    }
+}
+
+
+.dropdown-header {
+	font-size: 17px;
+}
+
+
+.home-video {
+    background-image: url(videobg.jpg);
+    background-position: center center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 700px;
+}
+
+#overlayed {
+    background-color: rgba(000, 000, 000, 0.6);
+    width: 100%;
+    height: 700px;
+}
+
+.videoWrapper {
+  position: relative;
+  padding-bottom: 56.25%;
+  /* 16:9 */
+  padding-top: 25px;
+  height: 0;
+}
+
+.videoWrapper iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+.hover:hover {
+    cursor: pointer;
+}
+          </style>
+</head>
+<body>
+
+<!--nav--->
+<header class="headroom header--fixed animate__animated py-2 switchable">
+<div class="container">
+<nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+        <!-- Logo -->
+        <a class="navbar-brand" href="/">
+            <img src="logo-white.png" alt="Logo" width="auto" height="50">
+        </a>
+
+        <!-- Mobile Toggler -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Nav links for desktop -->
+        <div class="collapse navbar-collapse d-none d-lg-block">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">About</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Data</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Stewardship</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">News</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Resources</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Partners</a>
+                </li>
+                
+                
+        <!-- Language Dropdown -->
+            <li class="nav-item dropdown ms-4 ps-4">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Languages
+                </a>
+                <div class="dropdown-menu switchable" aria-labelledby="navbarDropdownMenuLink">
+                    <h4 class="dropdown-header text-warning">Pacific Northwest:</h4>
+                    <a class="dropdown-item" href="#">Quileute</a>
+                    <a class="dropdown-item" href="#">Quinault</a>
+
+                    <div class="dropdown-divider"></div>
+
+                    <h4 class="dropdown-header text-warning">Alaska:</h4>
+                    <a class="dropdown-item" href="#">Inupiaq</a>
+                    <a class="dropdown-item" href="#">Yupik</a>
+                    <a class="dropdown-item" href="#">Koyukon</a>
+
+                    <div class="dropdown-divider"></div>
+
+                    <h4 class="dropdown-header text-warning">Pacific Islands:</h4>
+                    <a class="dropdown-item" href="#">Marshallese</a>
+                    <a class="dropdown-item" href="#">Samoan</a>
+                    <a class="dropdown-item" href="#">Pohnpeian</a>
+                </div>
+            </li>
+            
+            
+            
+            
+                            
+                <li class="nav-item">
+                
+                <div class="d-flex pt-2 align-items-center">
+    <i class="bi bi-sun pe-2"></i> <!-- Bootstrap icon for sun -->
+    
+<div class="form-check form-switch">
+  <input id="themeSwitcher" class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
+</div>
+    
+    <i class="bi bi-moon"></i> <!-- Bootstrap icon for moon -->
+</div>
+                
+                
+                </li>
+                
+                
+                
+<!--li class="nav-item dropdown">
+  <button class="btn btn-link nav-link py-2 px-0 px-lg-2 dropdown-toggle d-flex align-items-center" id="bd-theme" type="button" aria-expanded="false" data-bs-toggle="dropdown" data-bs-display="static" aria-label="Toggle theme (light)">
+    <i class="bi bi-sun-fill my-1 theme-icon-active"></i>
+    <span class="d-lg-none ms-2" id="bd-theme-text">Toggle theme</span>
+  </button>
+
+  <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="bd-theme-text">
+    <li>
+      <button type="button" class="dropdown-item d-flex align-items-center active" data-bs-theme-value="light" aria-pressed="true">
+        <i class="bi bi-sun-fill me-2 opacity-50 theme-icon"></i>
+        Light
+        <i class="bi bi-check2 ms-auto d-none"></i>
+      </button>
+    </li>
+    <li>
+      <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="dark" aria-pressed="false">
+        <i class="bi bi-moon-stars-fill me-2 opacity-50 theme-icon"></i>
+        Dark
+        <i class="bi bi-check2 ms-auto d-none"></i>
+      </button>
+    </li>
+  
+  </ul>
+</li-->
+
+
+
+                
+                
+            </ul>
+        </div>
+
+    </div>
+</nav>
+</div>
+<!-- Off-canvas content for mobile -->
+<div class="offcanvas offcanvas-end d-lg-none" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+    <div class="offcanvas-header">
+        <h5 id="offcanvasRightLabel">Menu</h5>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <ul class="navbar-nav mb-2 mb-lg-0">
+            <li class="nav-item">
+                <a class="nav-link" href="#">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">About</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Data</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Stewardship</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">News</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Resources</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Partners</a>
+            </li>
+        </ul>
+    </div>
+</div>
+</header>
+<!--nav ends--->
+
+
+
+
+
+
+
+
+
+
+<video poster="90.jpg" id="background-video" style="width:100%" id="video-intro" playsinline="true" autoplay="true" muted="true" loop="true" preload="auto">
+    <source src="90.mp4" type="video/mp4">
+</video>
+
+  
+  
+  
+
+  
+  
+  
+<div class="container d-flex align-items-center" style="min-height:100vh;">
+	<div class="row">
+		<div class="col-12 col-md-6">
+			<h1 class="display-1 fw-bold text-warning">Backyard Buoys</h1>
+			<p class="pb-4 text-white fs-4">The Backyard Buoys project enables Indigenous and coastal communities to gather and manage wave data, enhancing their blue economy and hazard protection. It offers a sustainable system for community-managed ocean buoys and web apps that simplify data access and integrate Indigenous Knowledge.</p>
+		</div>
+	</div>
+	<!--i class="bi bi-arrow-down-circle fs-1 position-absolute bottom-0 end-50"></i>
+	<i class="bi bi-arrow-down-circle scroll-indicator"></i>
+	<i class="bi bi-arrow-down scroll-indicator"></i-->
+	<i class="bi bi-arrow-down-circle scroll-indicator"></i>
+
+</div>
+
+
+<div class="container py-4">
+	<div class="col py-4">
+		<div class="text-center mb-2"><img src="nsf-logo-national-science-foundation.png.webp" width="100px" alt="" /></div>
+		<h5 class="text-center">Backyard Buoys is a project of the National Science Foundation Convergence Accelerator</h5>
+		<h2 class="text-center py-4 text-primary-emphasis">Equipping Underserved Communities<br>with Ocean Intelligence Platforms</h2>
+	</div>
+</div>
+
+
+<div class="container pb-4 mb-4">
+	<div class="row pb-4">
+		<div class="col-12 col-md-6">
+			<div class="module">
+				<i class="bi bi-info-circle-fill fs-1 text-primary"></i>
+
+			<h3 class="text-primary-emphasis">Description: </h3>
+			<p>Under the NSF Convergence Accelerator, Team Backyard Buoys collaborates with IOOS networks, Indigenous coastal communities, and a sensor company to make local wave measurements affordable and accessible. Having co-designed a stewardship plan and data apps in Phase I, we're set to innovate in Phase II using cost-effective tools, emphasizing hyper-local observations missing in current systems, all while integrating with a global network.</p>
+		</div>
+		</div>
+		<div class="col-12 col-md-6">
+			<div class="module">
+				 <i class="bi bi-1-circle-fill fs-1 text-primary"></i>
+			<h3 class="text-primary-emphasis">Phase I: </h3>
+			<p>During Phase I, based on research interviews, our team created the Community Research Implementation and Stewardship Plan (CRISP). Developed with partners from the Pacific Northwest, Alaska, and Pacific Islands, it addresses the unique needs of diverse Indigenous communities. This plan offers tailored strategies for ocean observing tool deployment. All Indigenous groups actively contributed in Phase I and continue in Phase II.</p>
+			</div>
+		</div>
+	</div>
+</div>
+  
+  
+<div id="map" style="width: 100%; height: 700px;"></div>
+
+
+
+
+
+<div class="container pb-4 my-4">
+    <div class="row pt-4">
+        <div class="col-12 py-4 mb-4">
+            <h2 class="text-center py-4 text-primary-emphasis">Partnerships to continue in Phase II</h2>
+            <div class="module col-12 col-md-6 mx-auto">
+            <p class="mx-auto"><b class="d-block">Backyard Buoys brings together geographically, academically, institutionally, and culturally diverse groups of partners:</b><br><i class="bi bi-1-circle-fill"></i> Three U.S. IOOS Regional Associations;<br><i class="bi bi-2-circle-fill"></i> Indigenous partners in each region;<br><i class="bi bi-3-circle-fill"></i> A proven ocean wave buoy developer; and new educational partners.</p>
+            </div>
+        </div>
+        <div class="col-12 col-md-4 text-center">
+            <i class="bi bi-globe-central-south-asia fs-1"></i>
+            <h4 class="text-primary-emphasis">Pacific Northwest:</h4>
+            <p>Northwest Association of Networked Ocean Observing Systems (NANOOS), Quileute Tribe, Quinault Indian Nation, Western Washington University.</p>
+        </div>
+        <div class="col-12 col-md-4 text-center">
+            <i class="bi bi-globe-americas fs-1"></i>
+            <h4 class="text-primary-emphasis">Alaska:</h4>
+            <p>Northwest Association of Networked Ocean Observing Systems (NANOOS), Quileute Tribe, Quinault Indian Nation, Western Washington University.</p>
+        </div>
+        <div class="col-12 col-md-4 text-center">
+            <i class="bi bi-globe-asia-australia fs-1"></i>
+            <h4 class="text-primary-emphasis">Pacific Islands:</h4>
+            <p>Northwest Association of Networked Ocean Observing Systems (NANOOS), Quileute Tribe, Quinault Indian Nation, Western Washington University.</p>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+<div class="container-fluid home-video position-relative p-0">
+    
+    <div id="overlayed">
+    <i style="font-size: 100px;" class="hover bi bi-play-circle-fill position-absolute top-50 start-50 translate-middle text-white" data-bs-toggle="modal" data-bs-target="#exampleModal"></i>
+</div>
+
+
+  
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Backyard Buoys: Bringing Spotters to Indigenous Communities on the Front Lines of Climate Change</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="videoWrapper">
+            <iframe width="560" height="315" src="https://www.youtube.com/embed/7rYTW_OSi-c?si=f55Uec2xtLye3JbZ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+            </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+</div>
+
+
+<div class="container my-4 py-4">
+    <div class="col-12">
+    <h1 class="text-primary-emphasis text-center py-4">Latest News</h1>
+    </div>
+    <div class="row">
+
+        <div class="col-4">
+        <div class="card mb-3">
+            <div class="row g-0">
+              <div class="col-md-4">
+                <img src="1.jpg" class="img-fluid rounded-start" alt="...">
+              </div>
+              <div class="col-md-8">
+                <div class="card-body">
+                  <h5 class="card-title">Backyard Buoys deploys its first buoy, in WA!</h5>
+                  <p class="card-text">Backyard Buoys makes a splash! Our first buoy was deployed by the Quileute Tribe ...</p>
+                  <p class="card-text"><small class="text-body-secondary">Last updated 3 mins ago</small></p>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+
+          <div class="col-4">
+          <div class="card mb-3" >
+            <div class="row g-0">
+              <div class="col-md-4">
+                <img src="2.jpg" class="img-fluid rounded-start" alt="...">
+              </div>
+              <div class="col-md-8">
+                <div class="card-body">
+                  <h5 class="card-title">Backyard Buoys 2022 Phase 2 announcement</h5>
+                  <p class="card-text">Backyard Buoys empowers Indigenous and other coastal communities in the Pacific Northwest, Alaska, and ...</p>
+                  <p class="card-text"><small class="text-body-secondary">Mon Aug 2, 2022</small></p>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+
+          <div class="col-4">
+          <div class="card mb-3" >
+            <div class="row g-0">
+              <div class="col-md-4">
+                <img src="3.png" class="img-fluid rounded-start" alt="...">
+              </div>
+              <div class="col-md-8">
+                <div class="card-body">
+                  <h5 class="card-title">Sofar Ocean announcement</h5>
+                  <p class="card-text">Backyard Buoys, a community-led ocean observing project that empowers Indigenous partners ...</p>
+                  <p class="card-text"><small class="text-body-secondary">Wed Sept 10, 2021</small></p>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+
+
+
+
+
+
+
+
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!--footer-->
+<div class="py-4 mt-5 bg-dark-blue">
+<div class="container" data-bs-theme="dark">
+    <footer class="py-5">
+        <h5 class="mb-3">Navigation</h5>
+      <div class="row">
+        
+        <div class="col-6 col-md-2 mb-3">
+          
+          <ul class="nav flex-column">
+            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Home</a></li>
+            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">About</a></li>
+           
+          </ul>
+        </div>
+  
+        <div class="col-6 col-md-2 mb-3">
+     
+          <ul class="nav flex-column">
+            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Data</a></li>
+            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Stewardship</a></li>
+     
+          </ul>
+        </div>
+  
+        <div class="col-6 col-md-2 mb-3">
+        
+          <ul class="nav flex-column">
+            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">News</a></li>
+            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Resources</a></li>
+
+          </ul>
+        </div>
+  
+        <div class="col-md-5 offset-md-1 mb-3">
+          <form>
+            <h5>Subscribe to our newsletter</h5>
+            <p>Monthly digest of what's new and exciting from us.</p>
+            <div class="d-flex flex-column flex-sm-row w-100 gap-2">
+              <label for="newsletter1" class="visually-hidden">Email address</label>
+              <input id="newsletter1" type="text" class="form-control" placeholder="Email address">
+              <button class="btn btn-primary" type="button">Subscribe</button>
+            </div>
+          </form>
+        </div>
+      </div>
+  
+      <div class="d-flex flex-column flex-sm-row justify-content-between py-4 my-4 border-top">
+        <p>© 2023 Company, Inc. All rights reserved.</p>
+        <ul class="list-unstyled d-flex">
+          <li class="ms-3"><a class="link-body-emphasis" href="#"><i class="bi bi-twitter"></i></a></li>
+          <li class="ms-3"><a class="link-body-emphasis" href="#"><i class="bi bi-instagram"></i></a></li>
+          <li class="ms-3"><a class="link-body-emphasis" href="#"><i class="bi bi-facebook"></i></a></li>
+        </ul>
+      </div>
+    </footer>
+  </div>
+
+</div>
+
+
+
+<!--footer-->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCZYAhfkBggoM9BnfEwm0yaA8XbsxTcit4&callback=initMap" async defer></script>
+<script>
+	
+var buoys = [
+    { name: "Point Grenville", latN: 47.284, latS: 47.283, lonW: -124.321, lonE: -124.320 },
+    { name: "Cape Thompson", latN: 68.149, latS: 68.148, lonW: -166.028, lonE: -166.027 },
+    { name: "Point Hope", latN: 68.347, latS: 68.346, lonW: -166.899, lonE: -166.898 },
+    { name: "Walkabout", latN: 68.884, latS: 68.883, lonW: -166.267, lonE: -166.266 },
+    { name: "Wainwright - 10 mi", latN: 70.730367, latS: null, lonW: -160.3675, lonE: null },
+    { name: "Wainwright - 5 mi", latN: 70.679983, latS: null, lonW: -160.211483, lonE: null },
+    { name: "Wainwright - 2 mi", latN: 70.654617, latS: null, lonW: -160.10285, lonE: null },
+    { name: "Dease Inlet", latN: 71.102367, latS: null, lonW: -155.384333, lonE: null },
+    { name: "Elson Lagoon - 2 mi", latN: 71.224617, latS: null, lonW: -155.836867, lonE: null },
+    { name: "Elson Lagoon - 5 mi", latN: 71.30265, latS: null, lonW: -155.70615, lonE: null },
+    { name: "Elson Lagoon - 10 mi", latN: 71.381717, latS: null, lonW: -155.602733, lonE: null },
+    { name: "Point Barrow - 2 mi", latN: 71.413517, latS: null, lonW: -156.441117, lonE: null },
+    { name: "Point Barrow - 5 mi", latN: 71.457083, latS: null, lonW: -156.605833, lonE: null },
+    { name: "North Buoy", latN: 71.3633, latS: null, lonW: -153.3457, lonE: null }
+];
+
+var customIcon = {
+    url: 'svg-chat.svg',  // URL of the image
+  //  scaledSize: new google.maps.Size(32, 32),  // size of the icon
+};
+
+	
+function averageCoordinate(coord1, coord2) {
+    if (coord1 && coord2) {
+        return (coord1 + coord2) / 2;
+    }
+    return coord1 || coord2;
+}
+
+function initMap() {
+    // A default center point for the map initialization.
+  //  var center = { lat: 68.347, lng: -166.899 };  // Using Point Hope as a starting point.
+    var center = { lat: 62.3008, lng: -149.4937 };
+
+    var map = new google.maps.Map(document.getElementById('map'), {
+        zoom: 4,
+        center: center,
+    //    mapTypeId: google.maps.MapTypeId.HYBRID
+        mapTypeId: 'hybrid'
+        
+    });
+
+    buoys.forEach(buoy => {
+        var avgLat = averageCoordinate(buoy.latN, buoy.latS);
+     //   var avgLng = averageCoordinate(-buoy.lonW, -buoy.lonE); // West and East are negative and positive respectively.
+        var avgLng = averageCoordinate(buoy.lonW, buoy.lonE);
+
+
+        new google.maps.Marker({
+            position: { lat: avgLat, lng: avgLng },
+            map: map,
+            title: buoy.name,
+            icon: customIcon
+        });
+    });
+}
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+<script>
+/*
+(() => {
+    'use strict';
+
+    const getStoredTheme = () => localStorage.getItem('theme') || 'auto';
+    const setStoredTheme = theme => localStorage.setItem('theme', theme);
+
+const getPreferredTheme = () => {
+    const storedTheme = getStoredTheme();
+    if (storedTheme !== 'auto') {
+        return storedTheme;
+    }
+
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    console.log("System prefers dark theme:", prefersDark);  // Add this debug line
+
+    return prefersDark ? 'dark' : 'light';
+};
+
+
+const setTheme = theme => {
+    if (theme === 'auto') {
+        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.setAttribute('data-bs-theme', 'dark');
+        } else {
+            document.documentElement.setAttribute('data-bs-theme', 'light');
+        }
+    } else {
+        document.documentElement.setAttribute('data-bs-theme', theme);
+    }
+};
+
+
+
+const showActiveTheme = theme => {
+    const activeThemeIcon = document.querySelector('#bd-theme .theme-icon-active');
+    const btnToActive = document.querySelector(`[data-bs-theme-value="${theme}"]`);
+
+    const iconClasses = ['bi-sun-fill', 'bi-moon-stars-fill', 'bi-circle-half'];
+
+    let iconClass;
+    switch (theme) {
+        case 'dark':
+            iconClass = 'bi-moon-stars-fill';
+            break;
+        case 'light':
+            iconClass = 'bi-sun-fill';
+            break;
+        default:
+            iconClass = 'bi-circle-half'; // for 'auto'
+    }
+
+    if (activeThemeIcon) { 
+        iconClasses.forEach(ic => activeThemeIcon.classList.remove(ic)); // remove all possible theme icons
+        activeThemeIcon.classList.add(iconClass); // add the desired one
+    } else {
+        console.log("activeThemeIcon still not found!"); // Debug log
+    }
+
+    document.querySelectorAll('[data-bs-theme-value]').forEach(element => {
+        element.classList.remove('active');
+        element.setAttribute('aria-pressed', 'false');
+    });
+
+    btnToActive.classList.add('active');
+    btnToActive.setAttribute('aria-pressed', 'true');
+};
+
+
+    const applyTheme = () => {
+        const theme = getPreferredTheme();
+        console.log("Preferred theme: ", theme); // Debug log
+        setTheme(theme);
+        showActiveTheme(theme);
+    };
+
+    window.addEventListener('DOMContentLoaded', () => {
+        // Moved here to ensure DOM is fully loaded
+        applyTheme();
+
+        document.querySelectorAll('[data-bs-theme-value]').forEach(toggle => {
+            toggle.addEventListener('click', () => {
+                const theme = toggle.getAttribute('data-bs-theme-value');
+                setStoredTheme(theme);
+                applyTheme();
+            });
+        });
+    });
+
+})();
+
+
+/*!
+ * headroom.js v0.12.0 - Give your page some headroom. Hide your header until you need it
+ * Copyright (c) 2020 Nick Williams - http://wicky.nillia.ms/headroom.js
+ * License: MIT
+ */
+
+!function(t,n){"object"==typeof exports&&"undefined"!=typeof module?module.exports=n():"function"==typeof define&&define.amd?define(n):(t=t||self).Headroom=n()}(this,function(){"use strict";function t(){return"undefined"!=typeof window}function d(t){return function(t){return t&&t.document&&function(t){return 9===t.nodeType}(t.document)}(t)?function(t){var n=t.document,o=n.body,s=n.documentElement;return{scrollHeight:function(){return Math.max(o.scrollHeight,s.scrollHeight,o.offsetHeight,s.offsetHeight,o.clientHeight,s.clientHeight)},height:function(){return t.innerHeight||s.clientHeight||o.clientHeight},scrollY:function(){return void 0!==t.pageYOffset?t.pageYOffset:(s||o.parentNode||o).scrollTop}}}(t):function(t){return{scrollHeight:function(){return Math.max(t.scrollHeight,t.offsetHeight,t.clientHeight)},height:function(){return Math.max(t.offsetHeight,t.clientHeight)},scrollY:function(){return t.scrollTop}}}(t)}function n(t,s,e){var n,o=function(){var n=!1;try{var t={get passive(){n=!0}};window.addEventListener("test",t,t),window.removeEventListener("test",t,t)}catch(t){n=!1}return n}(),i=!1,r=d(t),l=r.scrollY(),a={};function c(){var t=Math.round(r.scrollY()),n=r.height(),o=r.scrollHeight();a.scrollY=t,a.lastScrollY=l,a.direction=l<t?"down":"up",a.distance=Math.abs(t-l),a.isOutOfBounds=t<0||o<t+n,a.top=t<=s.offset[a.direction],a.bottom=o<=t+n,a.toleranceExceeded=a.distance>s.tolerance[a.direction],e(a),l=t,i=!1}function h(){i||(i=!0,n=requestAnimationFrame(c))}var u=!!o&&{passive:!0,capture:!1};return t.addEventListener("scroll",h,u),c(),{destroy:function(){cancelAnimationFrame(n),t.removeEventListener("scroll",h,u)}}}function o(t){return t===Object(t)?t:{down:t,up:t}}function s(t,n){n=n||{},Object.assign(this,s.options,n),this.classes=Object.assign({},s.options.classes,n.classes),this.elem=t,this.tolerance=o(this.tolerance),this.offset=o(this.offset),this.initialised=!1,this.frozen=!1}return s.prototype={constructor:s,init:function(){return s.cutsTheMustard&&!this.initialised&&(this.addClass("initial"),this.initialised=!0,setTimeout(function(t){t.scrollTracker=n(t.scroller,{offset:t.offset,tolerance:t.tolerance},t.update.bind(t))},100,this)),this},destroy:function(){this.initialised=!1,Object.keys(this.classes).forEach(this.removeClass,this),this.scrollTracker.destroy()},unpin:function(){!this.hasClass("pinned")&&this.hasClass("unpinned")||(this.addClass("unpinned"),this.removeClass("pinned"),this.onUnpin&&this.onUnpin.call(this))},pin:function(){this.hasClass("unpinned")&&(this.addClass("pinned"),this.removeClass("unpinned"),this.onPin&&this.onPin.call(this))},freeze:function(){this.frozen=!0,this.addClass("frozen")},unfreeze:function(){this.frozen=!1,this.removeClass("frozen")},top:function(){this.hasClass("top")||(this.addClass("top"),this.removeClass("notTop"),this.onTop&&this.onTop.call(this))},notTop:function(){this.hasClass("notTop")||(this.addClass("notTop"),this.removeClass("top"),this.onNotTop&&this.onNotTop.call(this))},bottom:function(){this.hasClass("bottom")||(this.addClass("bottom"),this.removeClass("notBottom"),this.onBottom&&this.onBottom.call(this))},notBottom:function(){this.hasClass("notBottom")||(this.addClass("notBottom"),this.removeClass("bottom"),this.onNotBottom&&this.onNotBottom.call(this))},shouldUnpin:function(t){return"down"===t.direction&&!t.top&&t.toleranceExceeded},shouldPin:function(t){return"up"===t.direction&&t.toleranceExceeded||t.top},addClass:function(t){this.elem.classList.add.apply(this.elem.classList,this.classes[t].split(" "))},removeClass:function(t){this.elem.classList.remove.apply(this.elem.classList,this.classes[t].split(" "))},hasClass:function(t){return this.classes[t].split(" ").every(function(t){return this.classList.contains(t)},this.elem)},update:function(t){t.isOutOfBounds||!0!==this.frozen&&(t.top?this.top():this.notTop(),t.bottom?this.bottom():this.notBottom(),this.shouldUnpin(t)?this.unpin():this.shouldPin(t)&&this.pin())}},s.options={tolerance:{up:0,down:0},offset:0,scroller:t()?window:null,classes:{frozen:"headroom--frozen",pinned:"headroom--pinned",unpinned:"headroom--unpinned",top:"headroom--top",notTop:"headroom--not-top",bottom:"headroom--bottom",notBottom:"headroom--not-bottom",initial:"headroom"}},s.cutsTheMustard=!!(t()&&function(){}.bind&&"classList"in document.documentElement&&Object.assign&&Object.keys&&requestAnimationFrame),s});
+
+var myElement = document.querySelector("header");
+var headroom = new Headroom(myElement, {
+  "offset": 5,
+  "tolerance": 5,
+  "classes": {
+    "initial": "animate__animated",
+    "pinned": "animate__slideInDown",
+    "unpinned": "animate__slideOutUp"
+  }
+});
+headroom.init();
+
+// to destroy
+//headroom.destroy();
+
+/*
+document.querySelector("#themeSwitcher").addEventListener('change', function() {
+    if (this.checked) {
+        document.documentElement.setAttribute('data-bs-theme', 'dark');
+        localStorage.setItem('theme', 'dark');
+    } else {
+        document.documentElement.removeAttribute('data-bs-theme');
+        localStorage.setItem('theme', 'light');
+    }
+});
+
+// Set theme on initial load based on localStorage
+document.addEventListener('DOMContentLoaded', (event) => {
+    const currentTheme = localStorage.getItem('theme');
+    
+    if (currentTheme === 'dark') {
+        document.documentElement.setAttribute('data-bs-theme', 'dark');
+        document.querySelector("#themeSwitcher").checked = true;
+    }
+});
+*/
+
+function setTheme(theme) {
+    if (theme === 'dark') {
+        document.documentElement.setAttribute('data-bs-theme', 'dark');
+        
+        // Apply the attribute to all elements with class 'switchable'
+        document.querySelectorAll('.switchable').forEach(el => {
+            el.setAttribute('data-bs-theme', 'dark');
+        });
+    } else {
+        document.documentElement.removeAttribute('data-bs-theme');
+        
+        // Remove the attribute from all elements with class 'switchable'
+        document.querySelectorAll('.switchable').forEach(el => {
+            el.removeAttribute('data-bs-theme');
+        });
+    }
+}
+document.querySelector("#themeSwitcher").addEventListener('change', function() {
+    if (this.checked) {
+        setTheme('dark');
+        localStorage.setItem('theme', 'dark');
+    } else {
+        setTheme('light');
+        localStorage.setItem('theme', 'light');
+    }
+});
+// Set theme on initial load based on localStorage
+document.addEventListener('DOMContentLoaded', (event) => {
+    const currentTheme = localStorage.getItem('theme');
+    
+    if (currentTheme === 'dark') {
+        setTheme('dark');
+        document.querySelector("#themeSwitcher").checked = true;
+    } else {
+        setTheme('light');
+    }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const header = document.querySelector('.headroom');
+const logo = document.querySelector('.navbar-brand img');
+
+function updateLogo() {
+    if(header.classList.contains('headroom--top')) {
+        logo.src = 'logo-white.png';
+        return;
+    }
+
+    if (header.hasAttribute('data-bs-theme') && header.getAttribute('data-bs-theme') === 'dark') {
+        logo.src = 'logo-white.png';
+    } else {
+        logo.src = 'logo-color.svg';
+    }
+}
+
+// Initialize the logo based on current conditions
+updateLogo();
+
+// Use MutationObserver to watch for changes in the class attribute of the header
+const observer = new MutationObserver(mutations => {
+    mutations.forEach(mutation => {
+        if (mutation.attributeName === "class") {
+            updateLogo();
+        }
+    });
+});
+
+observer.observe(header, {
+    attributes: true,
+    attributeFilter: ['class', 'data-bs-theme']
+});
+
+// Update the logo when the theme switcher is toggled
+document.querySelector("#themeSwitcher").addEventListener('change', updateLogo);
+
+
+
+
+
+
+
+
+
+	</script>
+</body>
+</html>
