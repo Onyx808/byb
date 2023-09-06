@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<svg version="1.1" width="32px" height="32px" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="-23.0375 -28.10125 278.375 309.1125" style="enable-background:new -23.0375 -28.10125 278.375 309.1125;" xml:space="preserve">
+<svg version="1.1" width="32px" height="32px" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="-23.0375 -25 278.375 312.1125" style="enable-background:new -23.0375 -25 278.375 312.1125;" xml:space="preserve">
     <style type="text/css">
         .st0 {
             fill: #FFFFFF;
@@ -26,8 +26,6 @@
         .st4 { fill: #281F28; }
         .st5 { fill: #4F4F4F; stroke: #FFFFFF; stroke-miterlimit: 10; }
     </style>
-
-
 
 <g id="Layer_2">
 	<path class="st0" d="M87.04,9.42L20.59,57.45C3.08,70.1-4.25,92.62,2.46,113.15l25.28,77.39c6.68,20.44,25.74,34.27,47.24,34.27
