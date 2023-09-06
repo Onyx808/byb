@@ -1,33 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Generator: Adobe Illustrator 27.8.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
-<svg version="1.1" width="32px" height="32px" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 232.3 224.81" style="enable-background:new 0 0 232.3 224.81;" xml:space="preserve">
-<style type="text/css">
-	.st0{
-        fill:#FFFFFF;
-        animation: pulse 1.5s infinite;
-        transform-origin: 50% 50%;
-    }
-	    @keyframes pulse {
-    0% {
-        transform: scale(0.9);
-        opacity: 1;
-    }
-    70% {
-        transform: scale(1.4);
-        opacity: 0;
-    }
-    100% {
-        transform: scale(0.9);
-        opacity: 0;
-    }
-		}
-	.st1{fill:#E4C43C;}
-	.st2{fill:#1C141C;}
-	.st3{fill:#FFFFFF;}
-	.st4{fill:#281F28;}
-	.st5{fill:#4F4F4F;stroke:#FFFFFF;stroke-miterlimit:10;}
-</style>
+<svg version="1.1" width="32px" height="32px" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="-46.075 -56.2025 324.45 337.2125" style="enable-background:new -46.075 -56.2025 324.45 337.2125;" xml:space="preserve">
+    <style type="text/css">
+        .st0 {
+            fill: #FFFFFF;
+            animation: pulse 1.5s infinite;
+            transform-origin: 50% 50%;
+        }
+        @keyframes pulse {
+            0% {
+                transform: scale(0.9);
+                opacity: 1;
+            }
+            70% {
+                transform: scale(1.4);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(0.9);
+                opacity: 0;
+            }
+        }
+        .st1 { fill: #E4C43C; }
+        .st2 { fill: #1C141C; }
+        .st3 { fill: #FFFFFF; }
+        .st4 { fill: #281F28; }
+        .st5 { fill: #4F4F4F; stroke: #FFFFFF; stroke-miterlimit: 10; }
+    </style>
+
+
+
 <g id="Layer_2">
 	<path class="st0" d="M87.04,9.42L20.59,57.45C3.08,70.1-4.25,92.62,2.46,113.15l25.28,77.39c6.68,20.44,25.74,34.27,47.24,34.27
 		h82.34c21.5,0,40.57-13.83,47.24-34.27l25.28-77.39c6.71-20.54-0.62-43.05-18.13-55.71L145.26,9.42
